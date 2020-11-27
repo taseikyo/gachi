@@ -1,0 +1,3 @@
+[submodule "bilibili-vtuber-danmaku"]
+	path = bilibili-vtuber-danmaku
+	url = https://github.com/dd-center/bilibili-vtuber-danmaku.git
