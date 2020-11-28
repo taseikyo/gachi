@@ -15,10 +15,6 @@ import time
 from collections import Counter, defaultdict
 from typing import Dict, List, Tuple
 
-import jieba
-from imageio import imread
-from wordcloud import WordCloud
-
 # 房间名排序
 # room_id: name
 MY_WIVES = {
@@ -95,7 +91,8 @@ def merge_repetition(danmaku: str) -> str:
 
 
 def obtain_danmakus(
-    my_wife: Tuple[str, str], date: str = time.strftime("%Y-%m-%d", time.localtime()),
+    my_wife: Tuple[str, str],
+    date: str = time.strftime("%Y-%m-%d", time.localtime()),
 ) -> Dict[str, int]:
     """
     获取对应老婆弹幕
@@ -122,7 +119,10 @@ def obtain_danmakus(
     return dd_danmakus
 
 
-def top_n_danmakus(danmakus: Dict[str, int], limit: int = 10,) -> List[Tuple[str, int]]:
+def top_n_danmakus(
+    danmakus: Dict[str, int],
+    limit: int = 10,
+) -> List[Tuple[str, int]]:
     """
     获取排名前 n 的弹幕
     $danmakus: 弹幕
@@ -132,7 +132,8 @@ def top_n_danmakus(danmakus: Dict[str, int], limit: int = 10,) -> List[Tuple[str
 
 
 def save_danmakus(
-    my_wife: Tuple[str, str], date: str = time.strftime("%Y-%m-%d", time.localtime()),
+    my_wife: Tuple[str, str],
+    date: str = time.strftime("%Y-%m-%d", time.localtime()),
 ) -> None:
     """
     获取弹幕并另存为文本
@@ -175,6 +176,10 @@ def draw_cloud(
     $date: 日期
     $color: 十六进制颜色
     """
+    import jieba
+    from imageio import imread
+    from wordcloud import WordCloud
+
     rid, _ = my_wife
     filename = f"{rid}_{date}_purge.txt"
     if not os.path.exists(filename):
@@ -206,7 +211,9 @@ def draw_cloud(
 
     if image_path:
         wc = WordCloud(
-            font_path=font_path, background_color=color, mask=imread(image_path),
+            font_path=font_path,
+            background_color=color,
+            mask=imread(image_path),
         )
     else:
         wc = WordCloud(
@@ -223,6 +230,58 @@ def draw_cloud(
         print(e)
 
 
+def active_dd(
+    date: str = time.strftime("%Y-%m-%d", time.localtime()),
+    limit: int = 10,
+):
+    """
+    某一天最活跃的 DD
+    活跃是指在某一天到处发弹幕的 DD
+    $data: 斩首那一天的 DD
+    """
+    folders = [x for x in os.listdir("bilibili-vtuber-danmaku")]
+    dd_occurrences = defaultdict(int)
+    for folder in folders:
+        filename = f"bilibili-vtuber-danmaku/{folder}/{date}.txt"
+        if not os.path.exists(filename):
+            continue
+        dd_set = set()
+        with open(filename, encoding="utf-8") as fp:
+            for line in fp:
+                # 开始为时间戳的留下来，由于源文件中存在其他数据
+                # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                if not line.startswith("16"):
+                    continue
+                dd_id = line.split(":")[1]
+                dd_set.add(dd_id)
+        for x in dd_set:
+            dd_occurrences[x] += 1
+    return Counter(dd_occurrences).most_common(limit)
+
+
+def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
+    """
+    获取 DD 的信息（昵称，头像，关注数）
+    """
+    import requests
+
+    url = f"https://api.bilibili.com/x/space/app/index?mid={mid}"
+    headers = {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+    }
+    try:
+        r = requests.get(url, headers=headers)
+        data = r.json()["data"]["info"]
+    except Exception as e:
+        print(e)
+        return ()
+    name = data["name"]
+    # http://i1.hdslb.com/bfs/face/{id}.jpg
+    avatar_id = data["face"].split("/")[-1]
+    following = data["following"]
+    return (name, avatar_id, following)
+
+
 def main():
     """
     食用注意设定阈值（limit）和时间（date）
@@ -237,6 +296,16 @@ def main():
         save_danmakus(my_wife=wife, date=date)
         draw_cloud(my_wife=wife, date=date)
         draw_cloud(my_wife=wife, date=date, image_path="images/box.png")
+
+
+def oct_top3():
+    print("日期\t头像\t昵称\tID\t处处 D\t关注数")
+    for x in range(1, 32):
+        date = f"2020-10-{x}"
+        for mid, cnt in active_dd(date, 3):
+            info = obatin_dd_info(mid)
+            print(f"{date}\t{info[1]}\t{info[0]}\t{mid}\t{cnt}\t{info[2]}")
+
 
 if __name__ == "__main__":
     main()
