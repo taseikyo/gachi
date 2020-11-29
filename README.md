@@ -21,6 +21,7 @@
 	- [只要我 D 的够快，就没人发现我是 DD](#只要我-d-的够快就没人发现我是-dd)
 	- [什么嘛，原来我 D 的还蛮多的](#什么嘛原来我-d-的还蛮多的)
 	- [阿伟，你又在 D 哦](#阿伟你又在-d-哦)
+	- [我生于世上的理由](#我生于世上的理由)
 
 ## 使用方法
 
@@ -223,6 +224,14 @@ python iamnotdd.py
 | ![](http://i1.hdslb.com/bfs/face/65e35428e3f51487257d23731d236b53ea2598ee.jpg_64x64.jpg) | VersaceGivenchy |    14    |
 | ![](http://i1.hdslb.com/bfs/face/164a7b589fb138047a4b5e06033751f1649b341b.jpg_64x64.jpg) |      柴可罗     |    13    |
 | ![](http://i1.hdslb.com/bfs/face/dfe77fd9fb029011dbdde35e6960f652ead8ee84.jpg_64x64.jpg) |     21449580    |    11    |
+
+### 我生于世上的理由
+
+10 月份，弹幕数最多的 20 位 DD，最多是 20988 条，也就是平均约 700 条/每天，太强了！
+
+![](images/2020-10-danmaku-king.png)
+
+\**2020-10 弹幕数最多的 20 位 DD 详情*
 
 ## License
 

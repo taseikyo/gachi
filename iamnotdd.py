@@ -259,6 +259,67 @@ def active_dd(
     return Counter(dd_occurrences).most_common(limit)
 
 
+def dd_monthly_report_vup_and_danmaku(
+    ddid: str, year: str = "2020", month: str = "10"
+) -> Tuple[List[int], List[int]]:
+    """
+    本月去过的直播间以及对应的弹幕数
+    $ddid: DD 的 mid
+    $year, $month: 年，月
+    """
+    folders = [x for x in os.listdir("bilibili-vtuber-danmaku")]
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    # 总弹幕次数
+    danmaku_set = []
+    vup_set = []
+    for folder in folders:
+        cnt = 0
+        for date in dates:
+            filename = f"bilibili-vtuber-danmaku/{folder}/{date}.txt"
+            if not os.path.exists(filename):
+                continue
+            with open(filename, encoding="utf-8") as fp:
+                for line in fp:
+                    if line.find(ddid) < 0:
+                        continue
+                    cnt += 1
+        if cnt > 0:
+            print(folder, cnt)
+            danmaku_set.append(cnt)
+            vup_set.append(folder)
+
+    return (danmaku_set, vup_set)
+
+
+def dd_monthly_report_danmaku(
+    year: str = "2020", month: str = "10", limit: int = 10
+) -> List[int]:
+    """
+    人 工 独 轮 车
+    每月最强 DD
+    $year, $month: 年，月
+    $limit: 阈值
+    """
+    dd_danmakus = defaultdict(int)
+    folders = [x for x in os.listdir("bilibili-vtuber-danmaku")]
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    for folder in folders:
+        for date in dates:
+            filename = f"bilibili-vtuber-danmaku/{folder}/{date}.txt"
+            if not os.path.exists(filename):
+                continue
+            with open(filename, encoding="utf-8") as fp:
+                for line in fp:
+                    # 开始为时间戳的留下来，由于源文件中存在其他数据
+                    # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                    if not line.startswith("16"):
+                        continue
+                    dd_id = line.split(":")[1]
+                    dd_danmakus[dd_id] += 1
+
+    return Counter(dd_danmakus).most_common(limit)
+
+
 def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
     """
     获取 DD 的信息（昵称，头像，关注数）
