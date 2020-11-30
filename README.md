@@ -15,8 +15,13 @@
 突然迸发的想法，有 [dd-center/bilibili-vtuber-danmaku](https://github.com/dd-center/bilibili-vtuber-danmaku) 收集的弹幕，我能做些什么？收集一下 DD 发言（学习一下），看看有哪些机器人（独轮车），做做词云图等等，应该还挺好玩的。
 
 ## Table of Contents
+
 - [使用方法](#使用方法)
 - [节 目 效 果](#节-目-效-果)
+	- [沙雕弹幕频率](#沙雕弹幕频率)
+	- [词云图](#词云图)
+	- [最受欢迎的 VTuber](#最受欢迎的-vtuber)
+	- [VTuber 一个月观看人数变化](#vtuber-一个月观看人数变化)
 - [DD 斩首](#dd-斩首)
 	- [只要我 D 的够快，就没人发现我是 DD](#只要我-d-的够快就没人发现我是-dd)
 	- [什么嘛，原来我 D 的还蛮多的](#什么嘛原来我-d-的还蛮多的)
@@ -40,6 +45,8 @@ python iamnotdd.py
 - [x] 处处 D（单日最活跃 DD，见下面 DD 斩首）
 
 ## 节 目 效 果
+
+### 沙雕弹幕频率
 
 下面是 Hiiro 11-25 直播弹幕的展示，记得是斗地主回，血压拉满笑死了。
 
@@ -70,11 +77,50 @@ python iamnotdd.py
 | g      | 1140 |
 | 8      | 1132 |
 
+### 词云图
+
 |x|y|
 |:-:|:-:|
 |![](images/21919321-2020-11-25-wordcloud.png)|![](images/21919321-2020-11-25-wordcloud_1.png)|
 
 \**Hiiro 2020-11-25 弹幕词云图*
+
+### 最受欢迎的 VTuber
+
+下面"人数"计算的是发过弹幕的 id 数，一个人发过 100 条也只算 1 条。
+
+> 2020-10 月最受欢迎 VTuber
+
+|                                           头像                                           |        昵称        |     id    | 房间号   | 人数    |
+|:----------------------------------------------------------------------------------------:|:------------------:|:---------:|----------|---------|
+| ![](http://i1.hdslb.com/bfs/face/163d99bc28a349410731d0404b180aa92c4d791e.jpg_64x64.jpg) | 绯赤艾莉欧Official | 407106379 | 21396545 | 1251789 |
+| ![](http://i1.hdslb.com/bfs/face/422215a006f40f18e015d63701d5fb1e46080c0e.jpg_64x64.jpg) | 乙女音Official     | 406805563 | 21320551 | 503153  |
+| ![](http://i1.hdslb.com/bfs/face/b3d6b3320baea31e82af616e59e6d4e95fa3d3a8.jpg_64x64.jpg) | 雫るる_Official    | 387636363 | 21013446 | 402365  |
+| ![](http://i1.hdslb.com/bfs/face/a7edad60dab7f5bf46b4ce6460e9ff988acbc68e.jpg_64x64.jpg) | 古守血遊official   | 2299184   | 8725120  | 339484  |
+| ![](http://i1.hdslb.com/bfs/face/6e84a8b680abff39ccc435949c6975c135138f1f.jpg_64x64.jpg) | HiiroVTuber        | 508963009 | 21919321 | 331887  |
+| ![](http://i1.hdslb.com/bfs/face/b5e82aca42450be98952a72681eccb3a5c7b096b.jpg_64x64.jpg) | 黑桃影             | 456368455 | 21641569 | 329720  |
+| ![](http://i1.hdslb.com/bfs/face/bcd5ff96ab7d9edf71411fe7a937ac56e2dad3fd.jpg_64x64.jpg) | 阿媂娅Artia        | 511613155 | 21908196 | 276205  |
+| ![](http://i1.hdslb.com/bfs/face/2c2e481c5f01f630be750f90aca4f27581720a2b.jpg_64x64.jpg) | 花园Serena         | 380829248 | 14327465 | 244961  |
+| ![](http://i1.hdslb.com/bfs/face/102e965ec24219e874a4d43c695cad1d558a1465.jpg_64x64.jpg) | 鈴宮鈴             | 480432362 | 21685677 | 207562  |
+| ![](http://i1.hdslb.com/bfs/face/99bb8e6a7411b0bffb969b8c8440486a4a62f961.jpg_64x64.jpg) | 神楽Mea_Official   | 349991143 | 12235923 | 206385  |
+| ![](http://i1.hdslb.com/bfs/face/b47463d917ec2dc7ef34951d51df490fa7f89531.jpg_64x64.jpg) | 物述有栖Official   | 434565011 | 21449083 | 204260  |
+| ![](http://i1.hdslb.com/bfs/face/1b748478876acebe106d332ea917184a115eecbe.jpg_64x64.jpg) | 进击的冰糖         | 198297    | 876396   | 203197  |
+| ![](http://i1.hdslb.com/bfs/face/8c07e8eaba492068f7627e437d2a327ca34f0530.jpg_64x64.jpg) | 阿萨Aza            | 480680646 | 21696950 | 193233  |
+| ![](http://i1.hdslb.com/bfs/face/09aad335d63e5470ddb217bf4112ec4683cfd8bf.jpg_64x64.jpg) | 星野饼美           | 82389     | 3561767  | 188105  |
+| ![](http://i1.hdslb.com/bfs/face/09088e15e8149c4c6411f0df1483476fb8a9b3e2.jpg_64x64.jpg) | 帕里_Paryi         | 1576121   | 4895312  | 183979  |
+| ![](http://i1.hdslb.com/bfs/face/1c202e4750bceb1692b60f5a0d6a004a2013d242.jpg_64x64.jpg) | 猫芒ベル_Official  | 487550002 | 21811136 | 181080  |
+| ![](http://i1.hdslb.com/bfs/face/9be44522dea053bba58ed26daa3f7e0455f64f07.jpg_64x64.jpg) | 呜米               | 617459493 | 22384516 | 176831  |
+| ![](http://i1.hdslb.com/bfs/face/cbc695338514954b4285ad40b674779e5e6f72bf.jpg_64x64.jpg) | Overidea_China     | 18149131  | 704808   | 173858  |
+| ![](http://i1.hdslb.com/bfs/face/9ea6ed607cb0b4adb19ace945586d2cf50797589.jpg_64x64.jpg) | 咩栗               | 745493    | 8792912  | 162781  |
+| ![](http://i1.hdslb.com/bfs/face/c9a854ef9b98c0c335482cae5c3f6ad26c5e939f.jpg_64x64.jpg) | NoWorld_Official   | 434662713 | 21448649 | 159396  |
+
+### VTuber 一个月观看人数变化
+
+鲸落哥永远滴神，谢谢他让我认识了团长艾莉欧，进而认识了巧克拉拉这群可爱努力有实力且会整活的孩子。
+
+![](images/2020-10-vup-monthly-trending.png)
+
+\**团长（绯赤艾莉欧Official）10 月份观看人数变化*
 
 ## DD 斩首
 

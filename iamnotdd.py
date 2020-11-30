@@ -48,6 +48,38 @@ MERGE_RULES = (
 )
 
 
+def load_short_info() -> List[Dict]:
+    """
+    获取简短的 vup 信息
+    dd-center/vtbs.moe/blob/master/api.md#short-info-httpsapivtbsmoev1short
+    [
+        {
+            "mid": xxx,
+            "uname": "yyy",
+            "roomid": zzz
+          },
+    ]
+    """
+    import json
+    import requests
+
+    possible_filenames = ["short.json", "short.7z"]
+    if os.path.exists(possible_filenames[0]):
+        with open(possible_filenames[0], encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    elif os.path.exists(possible_filenames[1]):
+        os.system(f"7z x {possible_filenames[1]}")
+        return load_short_info()
+
+    url = "https://api.vtbs.moe/v1/short"
+    data = requests.get(url).json()
+    with open(possible_filenames[0], "w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+    return data
+
+
 def merge_repetition(danmaku: str) -> str:
     """
     合并一些重复发言
@@ -296,7 +328,7 @@ def dd_monthly_report_danmaku(
 ) -> List[int]:
     """
     人 工 独 轮 车
-    每月最强 DD
+    每个月发弹幕总条数最多的 DD
     $year, $month: 年，月
     $limit: 阈值
     """
@@ -342,6 +374,77 @@ def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
     following = data["following"]
     return (name, avatar_id, following)
 
+
+def vup_monthly_report_popularity(
+    year: str = "2020", month: str = "10", limit: int = 10
+) -> List[int]:
+    """
+    最受欢迎的 v：观看人数
+    注意不是弹幕总条数，因为可能存在独轮车
+    """
+    vup_popularity = defaultdict(int)
+    folders = [x for x in os.listdir("bilibili-vtuber-danmaku")]
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    for folder in folders:
+        dd_set = set()
+        cnt = 0
+        for date in dates:
+            filename = f"bilibili-vtuber-danmaku/{folder}/{date}.txt"
+            if not os.path.exists(filename):
+                continue
+            with open(filename, encoding="utf-8") as fp:
+                for line in fp:
+                    # 开始为时间戳的留下来，由于源文件中存在其他数据
+                    # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                    if not line.startswith("16"):
+                        continue
+                    dd_id = line.split(":")[1]
+                    if not dd_id in dd_set:
+                        cnt += 1
+        vup_popularity[folder] = cnt
+
+    return Counter(vup_popularity).most_common(limit)
+
+
+def vup_monthly_report_popularity_trending(
+    roomid: str, year: str = "2020", month: str = "10"
+) -> Dict[str, int]:
+    """
+    vup 一个月观看人数变化
+    """
+    vup_popularity = defaultdict(int)
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    for date in dates:
+        cnt = 0
+        dd_set = set()
+        filename = f"bilibili-vtuber-danmaku/{roomid}/{date}.txt"
+        if not os.path.exists(filename):
+            continue
+        with open(filename, encoding="utf-8") as fp:
+            for line in fp:
+                # 开始为时间戳的留下来，由于源文件中存在其他数据
+                # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                if not line.startswith("16"):
+                    continue
+                dd_id = line.split(":")[1]
+                if not dd_id in dd_set:
+                    cnt += 1
+        vup_popularity[date] = cnt
+
+    return vup_popularity
+
+
+def obatin_vup_info(short_info: List[Dict], roomid: str) -> Tuple[str, str]:
+    """
+    返回 vup 的信息：（昵称，id）
+    $short_info: 短信息，见 load_short_info()
+    $roomid: 房间 id
+    """
+    for info in short_info:
+        if str(info['roomid']) == roomid:
+            return (info['uname'], info['mid'])
+
+    return ()
 
 def main():
     """
