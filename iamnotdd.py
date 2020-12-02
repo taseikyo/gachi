@@ -325,7 +325,7 @@ def dd_monthly_report_vup_and_danmaku(
 
 def dd_monthly_report_danmaku(
     year: str = "2020", month: str = "10", limit: int = 10
-) -> List[int]:
+) -> List[Tuple[str, int]]:
     """
     人 工 独 轮 车
     每个月发弹幕总条数最多的 DD
@@ -377,7 +377,7 @@ def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
 
 def vup_monthly_report_popularity(
     year: str = "2020", month: str = "10", limit: int = 10
-) -> List[int]:
+) -> List[Tuple[str, int]]:
     """
     最受欢迎的 v：观看人数
     注意不是弹幕总条数，因为可能存在独轮车
@@ -399,7 +399,7 @@ def vup_monthly_report_popularity(
                     if not line.startswith("16"):
                         continue
                     dd_id = line.split(":")[1]
-                    if not dd_id in dd_set:
+                    if dd_id not in dd_set:
                         cnt += 1
         vup_popularity[folder] = cnt
 
@@ -441,10 +441,11 @@ def obatin_vup_info(short_info: List[Dict], roomid: str) -> Tuple[str, str]:
     $roomid: 房间 id
     """
     for info in short_info:
-        if str(info['roomid']) == roomid:
-            return (info['uname'], info['mid'])
+        if str(info["roomid"]) == roomid:
+            return (info["uname"], info["mid"])
 
     return ()
+
 
 def main():
     """
@@ -469,6 +470,36 @@ def oct_top3():
         for mid, cnt in active_dd(date, 3):
             info = obatin_dd_info(mid)
             print(f"{date}\t{info[1]}\t{info[0]}\t{mid}\t{cnt}\t{info[2]}")
+
+
+def vup_monthly_popularity_detail(year: str, month: str, limit: int) -> None:
+    """
+    VTuber 月最受欢迎的详细情况
+    打印结果为（头像 id，昵称，id，房间号，月观看次数）
+    """
+    vup_data = load_short_info()
+    # [(roomid, cnt)]
+    vmrp = vup_monthly_report_popularity(year, month, limit)
+    for x in vmrp:
+        # uname, id
+        info = obatin_vup_info(vup_data, x[0])
+        avatar = obatin_dd_info(info[1])[1]
+        print(avatar, info[0], info[1], x[0], x[1])
+
+
+def group_monthly_report_popularity_trending_detail(
+    gid: List[str], year: str, month: str
+) -> None:
+    """
+    每月观看人数变化详情
+    """
+    vup_data = load_short_info()
+    for x in gid:
+        # uname id
+        info = obatin_vup_info(vup_data, x)
+        print(info, x)
+        vmr = vup_monthly_report_popularity_trending(x, year, month)
+        print(vmr)
 
 
 if __name__ == "__main__":
