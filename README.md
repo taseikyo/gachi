@@ -14,6 +14,8 @@
 
 突然迸发的想法，有 [dd-center/bilibili-vtuber-danmaku](https://github.com/dd-center/bilibili-vtuber-danmaku) 收集的弹幕，我能做些什么？收集一下 DD 发言（学习一下），看看有哪些机器人（独轮车），做做词云图等等，应该还挺好玩的。
 
+[>> 非正式的 VTuber & DD 月刊 :jack_o_lantern:](monthly)
+
 ## Table of Contents
 
 - [使用方法](#使用方法)

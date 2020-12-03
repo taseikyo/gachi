@@ -502,5 +502,34 @@ def group_monthly_report_popularity_trending_detail(
         print(vmr)
 
 
+def dd_monthly_danmaku_king():
+    """
+    月刊
+    DD 弹幕之王
+    """
+    # id, cnt
+    info = dd_monthly_report_danmaku("2020", "11", 20)
+    for x in info:
+        dd = obatin_dd_info(x[0])
+        # 头像 昵称 id 数量
+        print(dd[1], dd[0], x[0], x[1])
+
+
+def dd_monthly_active_top3():
+    """
+    月刊
+    每天前三活跃的 DD（D 的最多）
+    """
+    for x in range(1, 31):
+        date = f"2020-11-{x}"
+        # [(ddid, cnt),(ddid, cnt),(ddid, cnt)]
+        info = active_dd(date, 20)
+        for y in info:
+            # 昵称，头像，关注数
+            dd = obatin_dd_info(y[0])
+            # 日期 头像 昵称 id 数量 关注数
+            print(date, dd[1], dd[0], y[0], y[1], dd[2])
+
+
 if __name__ == "__main__":
     main()
