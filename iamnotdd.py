@@ -288,6 +288,8 @@ def active_dd(
                 dd_set.add(dd_id)
         for x in dd_set:
             dd_occurrences[x] += 1
+    if limit <= 0:
+        return dd_occurrences
     return Counter(dd_occurrences).most_common(limit)
 
 
@@ -357,10 +359,11 @@ def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
     获取 DD 的信息（昵称，头像，关注数）
     """
     import requests
+    from faker import Faker
 
     url = f"https://api.bilibili.com/x/space/app/index?mid={mid}"
     headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+        "user-agent": Faker().chrome()
     }
     try:
         r = requests.get(url, headers=headers)
@@ -529,6 +532,43 @@ def dd_monthly_active_top3():
             dd = obatin_dd_info(y[0])
             # 日期 头像 昵称 id 数量 关注数
             print(date, dd[1], dd[0], y[0], y[1], dd[2])
+
+
+def dd_monthly_name_cloud_image():
+    """
+    加权姓名词云图，权重为弹幕数
+    """
+    import csv
+    # 获取数据
+    # dd_name_dict = Counter()
+    # for x in range(1, 31):
+    #     date = f"2020-11-{x}"
+    #     dd_name_dict += Counter(active_dd(date, 0))
+    # with open("dd_monthly_name_cloud_image.csv", "w", encoding="utf-8") as f:
+    #     f.write("id, cnt\n")
+    #     for ddid, cnt in dd_name_dict.items():
+    #         f.write(f"{ddid}, {cnt}\n")
+    # 去掉稀疏数据
+    # with open("dd_monthly_name_cloud_image.csv") as f:
+    #     next(f)
+    #     f_reader = csv.reader(f)
+    #     for row in f_reader:
+    #         # 数字前有个空格 需要去掉
+    #         if int(row[1][1:]) < 99:
+    #             continue
+    #         print(row)
+    # 获取信息
+    with open("dd_monthly_name_cloud_image_large_than99.csv") as f:
+        next(f)
+        f_reader = csv.reader(f)
+        for row in f_reader:
+            # 昵称，头像，关注数
+            try:
+                dd = obatin_dd_info(row[0])
+                print(f"{dd[0]}, {row[0]}, {row[1]}")
+            except Exception as e:
+                print(f"error: {e}")
+                print(row)
 
 
 if __name__ == "__main__":
