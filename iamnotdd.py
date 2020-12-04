@@ -437,6 +437,33 @@ def vup_monthly_report_popularity_trending(
     return vup_popularity
 
 
+def vup_moyu_report(roomid: str, year: str, month: str) -> int:
+    """
+    认为只要有 "【xxx】" 弹幕就是同传
+    也就是这天有直播，否则就是在摸鱼
+    实践发现有很大问题，有很多人假装同传导致数据有误
+    """
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    cnt = 0
+    days = 0
+    for date in dates:
+        filename = f"bilibili-vtuber-danmaku/{roomid}/{date}.txt"
+        if not os.path.exists(filename):
+            continue
+        days += 1
+        with open(filename, encoding="utf-8") as fp:
+            for line in fp:
+                # 开始为时间戳的留下来，由于源文件中存在其他数据
+                # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                if not line.startswith("16"):
+                    continue
+                if line.split(":")[-1][0] == '【':
+                    print(date, line)
+                    cnt += 1
+                    break
+    return days - cnt
+
+
 def obatin_vup_info(short_info: List[Dict], roomid: str) -> Tuple[str, str]:
     """
     返回 vup 的信息：（昵称，id）
