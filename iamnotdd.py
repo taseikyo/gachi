@@ -288,6 +288,8 @@ def active_dd(
                 dd_set.add(dd_id)
         for x in dd_set:
             dd_occurrences[x] += 1
+    if limit <= 0:
+        return dd_occurrences
     return Counter(dd_occurrences).most_common(limit)
 
 
@@ -357,10 +359,11 @@ def obatin_dd_info(mid: str = "623441612") -> Tuple[str, str, int]:
     获取 DD 的信息（昵称，头像，关注数）
     """
     import requests
+    from faker import Faker
 
     url = f"https://api.bilibili.com/x/space/app/index?mid={mid}"
     headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+        "user-agent": Faker().chrome()
     }
     try:
         r = requests.get(url, headers=headers)
@@ -434,6 +437,33 @@ def vup_monthly_report_popularity_trending(
     return vup_popularity
 
 
+def vup_moyu_report(roomid: str, year: str, month: str) -> int:
+    """
+    认为只要有 "【xxx】" 弹幕就是同传
+    也就是这天有直播，否则就是在摸鱼
+    实践发现有很大问题，有很多人假装同传导致数据有误
+    """
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    cnt = 0
+    days = 0
+    for date in dates:
+        filename = f"bilibili-vtuber-danmaku/{roomid}/{date}.txt"
+        if not os.path.exists(filename):
+            continue
+        days += 1
+        with open(filename, encoding="utf-8") as fp:
+            for line in fp:
+                # 开始为时间戳的留下来，由于源文件中存在其他数据
+                # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                if not line.startswith("16"):
+                    continue
+                if line.split(":")[-1][0] == '【':
+                    print(date, line)
+                    cnt += 1
+                    break
+    return days - cnt
+
+
 def obatin_vup_info(short_info: List[Dict], roomid: str) -> Tuple[str, str]:
     """
     返回 vup 的信息：（昵称，id）
@@ -494,12 +524,46 @@ def group_monthly_report_popularity_trending_detail(
     每月观看人数变化详情
     """
     vup_data = load_short_info()
+
+    print(f"昵称 id 房间号 {' '.join([f'{year}-{month}-{x}' for x in range(1, 32)])} ")
     for x in gid:
         # uname id
         info = obatin_vup_info(vup_data, x)
-        print(info, x)
+        print(info[0], info[1], x, end=" ")
         vmr = vup_monthly_report_popularity_trending(x, year, month)
-        print(vmr)
+        print(" ".join((str(i) for i in vmr.values())))
+
+
+def vup_monthly_kusa_detail(year: str, month: str, limit: int = 20):
+    """
+    生草直播间
+    """
+    vup_kusa = defaultdict(int)
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    for room in os.listdir("bilibili-vtuber-danmaku"):
+        if room == ".git":
+            continue
+        if not os.path.isdir(f"bilibili-vtuber-danmaku/{room}"):
+            continue
+        cnt = 0
+        for date in dates:
+            filename = f"bilibili-vtuber-danmaku/{room}/{date}.txt"
+            if not os.path.exists(filename):
+                continue
+            with open(filename, encoding="utf-8") as fp:
+                for line in fp:
+                    # 开始为时间戳的留下来，由于源文件中存在其他数据
+                    # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                    if not line.startswith("16"):
+                        continue
+                    if line.find("草") >= 0 or line.find("艹") >= 0:
+                        cnt += 1
+        # 先过滤一点
+        if cnt > len(dates):
+            print(room, cnt)
+            vup_kusa[room] = cnt
+
+    return Counter(vup_kusa).most_common(limit)
 
 
 def dd_monthly_danmaku_king():
@@ -529,6 +593,43 @@ def dd_monthly_active_top3():
             dd = obatin_dd_info(y[0])
             # 日期 头像 昵称 id 数量 关注数
             print(date, dd[1], dd[0], y[0], y[1], dd[2])
+
+
+def dd_monthly_name_cloud_image():
+    """
+    加权姓名词云图，权重为弹幕数
+    """
+    import csv
+    # 获取数据
+    # dd_name_dict = Counter()
+    # for x in range(1, 31):
+    #     date = f"2020-11-{x}"
+    #     dd_name_dict += Counter(active_dd(date, 0))
+    # with open("dd_monthly_name_cloud_image.csv", "w", encoding="utf-8") as f:
+    #     f.write("id, cnt\n")
+    #     for ddid, cnt in dd_name_dict.items():
+    #         f.write(f"{ddid}, {cnt}\n")
+    # 去掉稀疏数据
+    # with open("dd_monthly_name_cloud_image.csv") as f:
+    #     next(f)
+    #     f_reader = csv.reader(f)
+    #     for row in f_reader:
+    #         # 数字前有个空格 需要去掉
+    #         if int(row[1][1:]) < 99:
+    #             continue
+    #         print(row)
+    # 获取信息
+    with open("dd_monthly_name_cloud_image_large_than99.csv") as f:
+        next(f)
+        f_reader = csv.reader(f)
+        for row in f_reader:
+            # 昵称，头像，关注数
+            try:
+                dd = obatin_dd_info(row[0])
+                print(f"{dd[0]}, {row[0]}, {row[1]}")
+            except Exception as e:
+                print(f"error: {e}")
+                print(row)
 
 
 if __name__ == "__main__":
