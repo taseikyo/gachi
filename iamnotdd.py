@@ -497,12 +497,46 @@ def group_monthly_report_popularity_trending_detail(
     每月观看人数变化详情
     """
     vup_data = load_short_info()
+
+    print(f"昵称 id 房间号 {' '.join([f'{year}-{month}-{x}' for x in range(1, 32)])} ")
     for x in gid:
         # uname id
         info = obatin_vup_info(vup_data, x)
-        print(info, x)
+        print(info[0], info[1], x, end=" ")
         vmr = vup_monthly_report_popularity_trending(x, year, month)
-        print(vmr)
+        print(" ".join((str(i) for i in vmr.values())))
+
+
+def vup_monthly_kusa_detail(year: str, month: str, limit: int = 20):
+    """
+    生草直播间
+    """
+    vup_kusa = defaultdict(int)
+    dates = [f"{year}-{month}-{x}" for x in range(1, 32)]
+    for room in os.listdir("bilibili-vtuber-danmaku"):
+        if room == ".git":
+            continue
+        if not os.path.isdir(f"bilibili-vtuber-danmaku/{room}"):
+            continue
+        cnt = 0
+        for date in dates:
+            filename = f"bilibili-vtuber-danmaku/{room}/{date}.txt"
+            if not os.path.exists(filename):
+                continue
+            with open(filename, encoding="utf-8") as fp:
+                for line in fp:
+                    # 开始为时间戳的留下来，由于源文件中存在其他数据
+                    # 如 TIME20:xxx 和最后一行的总结，这些我不需要
+                    if not line.startswith("16"):
+                        continue
+                    if line.find("草") >= 0 or line.find("艹") >= 0:
+                        cnt += 1
+        # 先过滤一点
+        if cnt > len(dates):
+            print(room, cnt)
+            vup_kusa[room] = cnt
+
+    return Counter(vup_kusa).most_common(limit)
 
 
 def dd_monthly_danmaku_king():
