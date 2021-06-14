@@ -26,6 +26,8 @@
 
 [>> 非正式的 VTuber & DD 月刊 :jack_o_lantern:](monthly)
 
+[>> 非正式的 VTuber & DD 日报 :jack_o_lantern:](daily)
+
 ## Table of Contents
 
 - [使用方法](#使用方法)

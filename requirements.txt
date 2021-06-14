@@ -1,0 +1,5 @@
+jieba
+matplotlib
+seaborn
+imageio
+wordcloud
