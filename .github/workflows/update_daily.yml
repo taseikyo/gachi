@@ -28,6 +28,6 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
       - name: Update daily
         run: |
-          git add daily
+          git add daily images
           git commit -m "Update Daily" -a ||  true
           git push --force origin HEAD:$GITHUB_REF || true

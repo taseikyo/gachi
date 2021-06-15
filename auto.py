@@ -291,23 +291,31 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
         f.write("\n## 词云图\n\n")
         f.write("|VTuber|词云图|\n|:-:|-|\n")
         for roomid, img_base64 in data["wordcloud"].items():
+            # 列表形式
             # f.write(f"- {vup_dict[roomid]}\n![][{roomid}-{date}]\n\n")
-            f.write(f"|{vup_dict[roomid]}|![][{roomid}-{date}]|\n")
+            # 表格形式
+            # f.write(f"|{vup_dict[roomid]}|![][{roomid}-{date}]|\n")
+
+            # 原图片形式，上面都是 base64 格式
+            # 导致最后生成 md 文件过大，GitHub 无法加载
+            f.write(f"|{vup_dict[roomid]}|![](../images/{roomid}_{date}_purge_wordcloud.png)|\n")
 
         f.write("\n## 百草园\n\n")
         f.write("|VTuber|草|\n|:-:|-|\n")
         for roomid, kusa in data["kusa"].items():
             f.write(f"|{vup_dict[roomid]}|{kusa}|\n")
 
-        f.write("\n\n")
-        for roomid, img_base64 in data["wordcloud"].items():
-            f.write(f"[{roomid}-{date}]:data:image/png;base64,{img_base64}\n")
+        # f.write("\n\n")
+        # 将 base64 图片放到文档最后
+        # for roomid, img_base64 in data["wordcloud"].items():
+        #     f.write(f"[{roomid}-{date}]:data:image/png;base64,{img_base64}\n")
 
 
 if __name__ == "__main__":
     today = datetime.datetime.today()
     yday = today - datetime.timedelta(days=1)
-    date = f"{yday.year}-{yday.month}-{yday.day}"
+    # date = f"{yday.year}-{yday.month}-{yday.day}"
+    date = "2021-6-14"
     download_all_vup_day(date)
     data = {}
     data["kusa"] = generate_kusa_all_vup_day(date)
