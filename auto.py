@@ -314,8 +314,7 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
 if __name__ == "__main__":
     today = datetime.datetime.today()
     yday = today - datetime.timedelta(days=1)
-    # date = f"{yday.year}-{yday.month}-{yday.day}"
-    date = "2021-6-14"
+    date = f"{yday.year}-{yday.month}-{yday.day}"
     download_all_vup_day(date)
     data = {}
     data["kusa"] = generate_kusa_all_vup_day(date)
