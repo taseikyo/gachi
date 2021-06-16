@@ -311,6 +311,43 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
         #     f.write(f"[{roomid}-{date}]:data:image/png;base64,{img_base64}\n")
 
 
+def update_daily_readme():
+    """
+    根据日刊更新 README
+    """
+    files = [f for f in os.listdir("daily") if not f.startswith("README")]
+    files.sort()
+    print(files)
+
+    # 表格每行 5 个，不足 5 个补空
+    cnt = 0
+    one_line = []
+    all_line = []
+    for file in files:
+        one_line.append(f" [{file.split('.')[0]}]({file}) ")
+        cnt += 1
+        if cnt == 5:
+            all_line.append(one_line)
+            one_line = []
+            cnt = 0
+
+    if 0 < cnt < 5:
+        one_line += [" " for _ in range(cnt, 6)]
+        all_line.append(one_line)
+
+    table = "\n".join([f"|{'|'.join(x)}|" for x in all_line])
+
+    license = "\n\n## License\n\nCopyright (c) 2021 Lewis Tian. Licensed under the MIT license.\n"
+
+    with open("daily/README_TEMPLATE.md", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    with open("daily/README.md", "w", encoding="utf-8") as f:
+        f.write("".join(lines))
+        f.write(table)
+        f.write(license)
+
+
 if __name__ == "__main__":
     today = datetime.datetime.today()
     yday = today - datetime.timedelta(days=1)
@@ -320,3 +357,4 @@ if __name__ == "__main__":
     data["kusa"] = generate_kusa_all_vup_day(date)
     data["wordcloud"] = generate_wordcloud_all_vup_day(date)
     dump_daily_md(date, data)
+    update_daily_readme()
