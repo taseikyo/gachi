@@ -165,7 +165,7 @@ def draw_cloud(
     try:
         wc.generate(my_word_str)
         # 保存
-        wc.to_file(f"images/{dst_filename}.png")
+        wc.to_file(f"images/daily/{dst_filename}.png")
         # 显示
         # plt.imshow(wc, interpolation='bilinear')
         # plt.axis("off")
@@ -180,7 +180,7 @@ def image_base64(img_name) -> str:
 
     @img_name: 图片名称，不带后缀（如：14052636_2021-6-13_purge_wordcloud）
     """
-    img_path = f"images/{img_name}.png"
+    img_path = f"images/daily/{img_name}.png"
     if not os.path.exists(img_path):
         print(f"{img_path} is not existed!")
         return
@@ -256,7 +256,7 @@ def generate_kusa_all_vup_day(date, rooms_filepath="rooms.txt") -> dict:
     plt.xlabel("VTuber", fontsize=16)
     plt.ylabel("Counts", fontsize=16)
     plt.title(f"Number of kusa ({date})", fontsize=24)
-    plt.savefig(f"images/{date}-kusa.png")
+    plt.savefig(f"images/daily/{date}-kusa.png")
 
     return kusa_dict
 
@@ -285,9 +285,15 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
 > @Link    : github.com/taseikyo
 """
 
-    with open(f"daily/{date}.md", "w", encoding="utf-8") as f:
+    today = datetime.datetime.today()
+    day1 = today - datetime.timedelta(days=2)
+    date1 = f"{day1.year}-{day1.month}-{day1.day}"
+    date2 = f"{today.year}-{today.month}-{today.day}"
+    with open(f"daily/docs/{date}.md", "w", encoding="utf-8") as f:
         f.write(file_header)
-        f.write(f"\n# DD 日报（{date}）\n\n")
+        f.write(f"\n# DD 日报（{date}）\n")
+        anchor = f"\n[readme](../README.md) | [yesterday]({date1}.md) | [tomorrow]({date2}.md)\n"
+        f.write(anchor)
         f.write("\n## 词云图\n\n")
         f.write("|VTuber|词云图|\n|:-:|-|\n")
         for roomid, img_base64 in data["wordcloud"].items():
@@ -298,12 +304,14 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
 
             # 原图片形式，上面都是 base64 格式
             # 导致最后生成 md 文件过大，GitHub 无法加载
-            f.write(f"|{vup_dict[roomid]}|![](../images/{roomid}_{date}_purge_wordcloud.png)|\n")
+            f.write(f"|{vup_dict[roomid]}|![](../../images/daily/{roomid}_{date}_purge_wordcloud.png)|\n")
 
         f.write("\n## 百草园\n\n")
         f.write("|VTuber|草|\n|:-:|-|\n")
         for roomid, kusa in data["kusa"].items():
             f.write(f"|{vup_dict[roomid]}|{kusa}|\n")
+
+        f.write(anchor)
 
         # f.write("\n\n")
         # 将 base64 图片放到文档最后
@@ -315,7 +323,7 @@ def update_daily_readme():
     """
     根据日刊更新 README
     """
-    files = [f for f in os.listdir("daily") if not f.startswith("README")]
+    files = [f for f in os.listdir("daily/docs") if not f.startswith("README")]
     files.sort()
     print(files)
 
@@ -324,7 +332,7 @@ def update_daily_readme():
     one_line = []
     all_line = []
     for file in files:
-        one_line.append(f" [{file.split('.')[0]}]({file}) ")
+        one_line.append(f" [{file.split('.')[0]}](docs/{file}) ")
         cnt += 1
         if cnt == 5:
             all_line.append(one_line)
