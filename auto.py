@@ -54,6 +54,9 @@ def obatin_danmaku_of_vup_one_day(roomid: str, date: str) -> None:
         urequest.urlretrieve(url, f"{roomid}/{date}.txt")
         print(f"The danmaku has been save to {roomid}/{date}.txt!")
     except:
+        # 姑且放个空文件在这
+        with open(f"{roomid}/{date}.txt", "w") as f:
+            pass
         print(f"Fail to download the danmaku of {date}!")
 
 
