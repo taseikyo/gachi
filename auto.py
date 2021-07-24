@@ -254,12 +254,13 @@ def generate_kusa_all_vup_day(date, rooms_filepath="rooms.txt") -> dict:
                         cnt += 1
             kusa_dict[roomid] = cnt
 
-    plt.figure(figsize=(18, 5))
-    plt.bar(kusa_dict.keys(), kusa_dict.values(), color="white")
-    plt.xlabel("VTuber", fontsize=16)
-    plt.ylabel("Counts", fontsize=16)
-    plt.title(f"Number of kusa ({date})", fontsize=24)
-    plt.savefig(f"images/daily/{date}-kusa.png")
+    # 画图
+    # plt.figure(figsize=(18, 5))
+    # plt.bar(kusa_dict.keys(), kusa_dict.values(), color="white")
+    # plt.xlabel("VTuber", fontsize=16)
+    # plt.ylabel("Counts", fontsize=16)
+    # plt.title(f"Number of kusa ({date})", fontsize=24)
+    # plt.savefig(f"images/daily/{date}-kusa.png")
 
     return kusa_dict
 
