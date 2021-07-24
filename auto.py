@@ -307,7 +307,9 @@ def dump_daily_md(date, data, rooms_filepath="rooms.txt") -> None:
 
             # 原图片形式，上面都是 base64 格式
             # 导致最后生成 md 文件过大，GitHub 无法加载
-            f.write(f"|{vup_dict[roomid]}|![](../../images/daily/{roomid}_{date}_purge_wordcloud.png)|\n")
+            f.write(
+                f"|{vup_dict[roomid]}|![](../../images/daily/{roomid}_{date}_purge_wordcloud.png)|\n"
+            )
 
         f.write("\n## 百草园\n\n")
         f.write("|VTuber|草|\n|:-:|-|\n")
@@ -327,7 +329,17 @@ def update_daily_readme():
     根据日刊更新 README
     """
     files = [f for f in os.listdir("daily/docs") if not f.startswith("README")]
-    files.sort()
+
+    def sort_files(filename):
+        """
+        排序文件名，由于之前命名问题导致排序存在问题
+        2021-7-23.md 会在 2021-7-3.md 之前
+        """
+        filename = filename.split(".")[0]
+        y, m, d = [int(i) for i in filename.split("-")]
+        return y * 100 + m * 50 + d
+
+    files.sort(key=sort_files)
     print(files)
 
     # 表格每行 5 个，不足 5 个补空
